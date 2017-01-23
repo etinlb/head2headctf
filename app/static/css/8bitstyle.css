@@ -11,13 +11,25 @@
 }
 
 
-.eightbit-button {
+.eightbit-input {
+  background: 0;
+  border-color: rgb(80, 244, 66);
+}
+
+.eightbit-input:hover, .eightbit-input:focus, .eightbit-input:active, .eightbit-input.active, .open>.dropdown-toggle.eightbit-input {
+  background: 0;
+  border-color: rgb(80, 244, 66);
+  color :rgb(80, 244, 66);
+}
+
+
+.eightbit-btn {
   color: rgb(80, 244, 66);
   background-color: Transparent;
   border-color: rgb(80, 244, 66);
 }
 
-.eightbit-button:hover, .eightbit-button:focus, .eightbit-button:active, .eightbit-button.active, .open>.dropdown-toggle.eightbit-button {
+.eightbit-btn:hover, .eightbit-btn:focus, .eightbit-btn:active, .eightbit-btn.active, .open>.dropdown-toggle.eightbit-btn {
     color: #fff;
     background-color: rgb(80, 244, 66);
     border-color: rgb(80, 244, 66);
