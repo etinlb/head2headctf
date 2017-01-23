@@ -1,7 +1,8 @@
 import sqlite3
+import time
 from argparse import ArgumentParser
 
-from app.db_operations import connect_db, start_challenge, register_user, insert_challenge, find_user
+from app.db_operations import connect_db, start_challenge, register_user, insert_challenge, find_user, stop_running_matches, start_match
 from pprint import pprint
 
 DATABASE = "data.db"
@@ -9,10 +10,6 @@ DATABASE = "data.db"
 DEFAULT_SCORE = 50
 
 connection = connect_db(DATABASE)
-
-
-def add_user(conn, username):
-    pprint(register_user(conn, username))
 
 
 def start_contest(conn, username_1, username_2, flag_1, flag_2, score):
@@ -29,6 +26,9 @@ def start_contest(conn, username_1, username_2, flag_1, flag_2, score):
 
     start_challenge(conn, user_1["id"], flag_1, score)
     start_challenge(conn, user_2["id"], flag_2, score)
+
+    stop_running_matches(conn)
+    start_match(conn, user_1["id"], user_2["id"], int(time.time()))
 
     return True
 

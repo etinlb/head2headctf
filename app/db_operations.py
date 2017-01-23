@@ -4,26 +4,36 @@ from pprint import pprint
 Container for functions that do database things
 """
 
-INSERT_FLAG_QUERY = "INSERT INTO flags (challenge_id, user_id, flag) VALUES (?,?,?)"
-
+ACTIVE_MATCH_QUERY = "SELECT * FROM match_data WHERE active = 1";
 
 def connect_db(db_file, row_factory=sqlite3.Row):
     conn = sqlite3.connect(db_file)
     conn.row_factory = row_factory
     return conn
 
+def declare_winner(conn, username):
+    user = find_user(g.db, request.form["username"])
+    match_query = "SELECT * FROM match WHERE user_id_1 = (?) or user_id_2 = (?) and active = 1"
+
+    match_id = execute_trans(conn, match_query, (user["id"],))
+
+    if match_id is False:
+        print("THAT USER WASN'T IN A MATCH")
+        return
+
+
+
 
 def stop_challenge(conn, user):
-    return execute_trans(conn, "UPDATE USERS set next_score = 0, current_flag = '' where id = (?)", (user["id"],))
+    return execute_trans(conn, "UPDATE USERS set next_score = 0, current_flag = '' where id = (?)",
+                         (user["id"],))
 
 
 def set_user_score(conn, user, score):
-    """Should be in db operations"""
     return execute_trans(conn, "UPDATE USERS set score = (?) where id = (?)", (score, user["id"]))
 
 
 def add_user_next_score(conn, user):
-    """Should be in db operations"""
     return set_user_score(conn, user, user["score"] + user["next_score"])
 
 
@@ -58,6 +68,43 @@ def get_current_flag(conn, user_id, challenge_id):
 
     return flag["flag"]
 
+def stop_match(conn, match_id, winner=None, score=0):
+    stop_query = ""
+    argument_tup = ()
+
+    if winner is None:
+        stop_query = "UPDATE match set active = 0, score=(?) where id=(?)"
+        argument_tup = (score, match_id)
+    else:
+        stop_query = "UPDATE match set active = 0, score=(?), winner=(?) where id=(?)"
+        argument_tup = (score, winner, match_id)
+
+    return execute_trans(conn, stop_query, argument_tup)
+
+
+def stop_running_matches(conn, winner=None, score=0):
+    stop_query = ""
+    argument_tup = ()
+
+    if winner is None:
+        stop_query = "UPDATE match set active = 0, score=(?) where active = 1"
+        argument_tup = (score,)
+    else:
+        stop_query = "UPDATE match set active = 0, score=(?), winner=(?) where " \
+                     "active = 0"
+        argument_tup = (score, winner)
+
+    return execute_trans(conn, stop_query, argument_tup)
+
+
+def start_match(conn, user_id_1, user_id_2, timestamp):
+    # start a new match
+    insert_statement = "INSERT INTO match (active, user_id_1, user_id_2, timestarted)" \
+                       "VALUES (1, (?), (?), (?))"
+    argument_tup = (user_id_1, user_id_2, timestamp)
+
+    return execute_trans(conn, insert_statement, argument_tup)
+
 
 def start_challenge(conn, user_id, flag, next_score):
     # set current flag in user
@@ -66,51 +113,14 @@ def start_challenge(conn, user_id, flag, next_score):
     return execute_trans(conn, update_user_query, (flag, next_score, user_id))
 
 
-def get_or_create_vulnerable_service(conn, user, service_name):
-    service_query = "SELECT * FROM vulnerable_services WHERE user_id = (?) AND service = (?)"
-    service = query_db(
-        conn, service_query, args=(user["id"], service_name), one=True)
-
-    if not service:
-        insert_query = "INSERT INTO vulnerable_services (user_id, service) VALUES (?,?)"
-        success = execute_trans(conn, insert_query, (user["id"], service_name))
-        if success:
-            service = query_db(
-                conn, service_query, args=(user["id"], service_name), one=True)
-        else:
-            raise ValueError(
-                "Can't insert " + service_name + " for user " + str(user))
-
-    return service
-
-
-def update_vulnerable_services(conn, ip, service_name, vulnerable, is_up):
-    user = user_for_ip(conn, ip)
-    service = get_or_create_vulnerable_service(conn, user, service_name)
-    update_query = "UPDATE vulnerable_services set vulnerable = (?)"
-    args = [vulnerable]
-    if is_up:
-        update_query += ", uptime = (?), available = 1" + str()
-        args.append(service["uptime"] + 1)
-    else:
-        update_query += ", downtime = (?), available = 0"
-        args.append(service["downtime"] + 1)
-
-    update_query += " WHERE user_id = (?) AND service = (?)"
-    args.append(user["id"])
-    args.append(service_name)
-
-    return execute_trans(conn, update_query, args)
-
-
 def get_all_users(conn):
     user_query = "SELECT * FROM USERS"
     return query_db(conn, user_query)
 
 
 def query_db(conn, query, args=(), one=False):
-    pprint(query)
-    pprint(args)
+    # pprint(query)
+    # pprint(args)
     cur = conn.execute(query, args)
     rv = cur.fetchall()
     cur.close()
@@ -120,20 +130,5 @@ def query_db(conn, query, args=(), one=False):
 def find_user(conn, username):
     query = "SELECT * FROM USERS WHERE username = (?)"
     user = query_db(conn, query, args=(username,), one=True)
-    pprint(user["username"])
+    # pprint(user["username"])
     return user
-
-
-# if __name__ == '__main__':
-#     # Self test stuff
-#     print("hello")
-#     conn = connect_db("self_test.db")
-#     register_user(conn, "user1", "123.2.2.1")
-#     register_user(conn, "user2", "123.2.2.2")
-#     # Add services
-#     update_vulnerable_services(conn, "123.2.2.1", "service1", True, True)
-#     update_vulnerable_services(conn, "123.2.2.1", "service2", True, True)
-#     update_vulnerable_services(conn, "123.2.2.1", "service3", True, False)
-#     update_vulnerable_services(conn, "123.2.2.2", "service1", True, True)
-#     update_vulnerable_services(conn, "123.2.2.2", "service2", False, True)
-#     update_vulnerable_services(conn, "123.2.2.2", "service3", False, True)
