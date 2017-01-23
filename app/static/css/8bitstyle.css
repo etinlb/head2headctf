@@ -1,0 +1,161 @@
+
+
+@font-face { font-family: eightbit; src: url('/static/fonts/slkscr.ttf'); }
+@font-face { font-family: eightbit; font-weight: bold; src: url('/static/fonts/slkscr.ttfb');}
+
+.eightbit-font  {
+  font-family: "eightbit", helvetica, arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: rgb(80, 244, 66);
+}
+
+
+.eightbit-button {
+  color: rgb(80, 244, 66);
+  background-color: Transparent;
+  border-color: rgb(80, 244, 66);
+}
+
+.eightbit-button:hover, .eightbit-button:focus, .eightbit-button:active, .eightbit-button.active, .open>.dropdown-toggle.eightbit-button {
+    color: #fff;
+    background-color: rgb(80, 244, 66);
+    border-color: rgb(80, 244, 66);
+}
+
+
+
+body {
+  font-family: "eightbit", helvetica, arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  margin-top:30px;
+  color: rgb(80, 244, 66);
+  background-color : rgb(0, 0, 0);
+}
+
+div.table-title {
+   display: block;
+  margin: auto;
+  max-width: 600px;
+  padding:5px;
+  width: 100%;
+}
+/* Override bootstap tables */
+.table td, .table th {
+  border-top: 0px;
+}
+.table thead th {
+  border-bottom: 0px;
+
+}
+
+.table-title h3 {
+   font-size: 30px;
+   font-weight: 400;
+   font-style:normal;
+   font-family: "eightbit", helvetica, arial, sans-serif;
+   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+   text-transform:uppercase;
+}
+
+
+/*** Table Styles **/
+
+.table-fill {
+  background: white;
+  border-collapse: collapse;
+  height: 320px;
+  margin: auto;
+  max-width: 600px;
+  padding:5px;
+  width: 100%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  animation: float 5s infinite;
+}
+
+th {
+  font-size:23px;
+  font-weight: 100;
+  padding:24px;
+  text-align:left;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  vertical-align:middle;
+}
+
+th:first-child {
+}
+
+th:last-child {
+}
+
+tr {
+  font-size:16px;
+  font-weight:normal;
+  text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+}
+
+tr:hover td {
+  background:#4E5066;
+}
+
+tr:first-child {
+  border-top:none;
+}
+
+tr:last-child {
+  border-bottom:none;
+}
+
+/*tr:nth-child(odd) td {
+  background:#EBEBEB;
+}
+*/
+
+/*tr:nth-child(odd):hover td {
+  background:#ffffff;
+}
+*/
+tr:last-child td:first-child {
+}
+
+tr:last-child td:last-child {
+}
+
+td {
+  /*background:#FFFFFF;*/
+  padding:20px;
+  text-align:left;
+  vertical-align:middle;
+  font-weight:300;
+  font-size:18px;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+}
+
+td:last-child {
+}
+
+th.text-left {
+  text-align: left;
+}
+
+th.text-center {
+  text-align: center;
+}
+
+th.text-right {
+  text-align: right;
+}
+
+td.text-left {
+  text-align: left;
+}
+
+td.text-center {
+  text-align: center;
+}
+
+td.text-right {
+  text-align: right;
+}
