@@ -9,7 +9,7 @@
 <h2>Capture flag!</h2>
 {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 
-<form action="{{ url_for('postflag') }}" method=post>
+<form action="{{ url_for('submitflag') }}" method=post>
 
     <div class="form-group row">
         <label class="col-md-2 col-form-label" for=username>Alias:</label>

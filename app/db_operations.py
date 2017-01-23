@@ -12,21 +12,28 @@ def connect_db(db_file, row_factory=sqlite3.Row):
     return conn
 
 def declare_winner(conn, username):
-    user = find_user(g.db, request.form["username"])
-    match_query = "SELECT * FROM match WHERE user_id_1 = (?) or user_id_2 = (?) and active = 1"
+    match_query = "SELECT * FROM match_data WHERE username1 = (?) or username2 = (?) and active = 1"
 
-    match_id = execute_trans(conn, match_query, (user["id"],))
+    match = query_db(conn, match_query, (username, username), True)
 
-    if match_id is False:
+    if match is None:
         print("THAT USER WASN'T IN A MATCH")
         return
 
+    set_winner_query = "UPDATE match set winner = (?), active = 0 WHERE id = (?)"
+
+    winner_id = match["user_id_1"] if match["username1"] == username else match["user_id_2"]
+
+    stop_challenge(conn, match["user_id_1"])
+    stop_challenge(conn, match["user_id_2"])
+
+    return execute_trans(conn, set_winner_query, (winner_id, match["id"]))
 
 
 
-def stop_challenge(conn, user):
+def stop_challenge(conn, user_id):
     return execute_trans(conn, "UPDATE USERS set next_score = 0, current_flag = '' where id = (?)",
-                         (user["id"],))
+                         (user_id,))
 
 
 def set_user_score(conn, user, score):
@@ -36,6 +43,11 @@ def set_user_score(conn, user, score):
 def add_user_next_score(conn, user):
     return set_user_score(conn, user, user["score"] + user["next_score"])
 
+def start_trans(conn):
+    return conn.cursor()
+
+def commit_transaction(conn):
+    return conn.commit()
 
 def execute_trans(conn, statement, args_tup):
     try:

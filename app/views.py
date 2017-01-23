@@ -37,16 +37,19 @@ def register():
         return redirect(url_for('scoreboard', _external=True, _scheme='https'))
 
 
-@app.route("/submitflag")
+@app.route("/submitflag", methods=['GET', 'POST'])
 def submitflag(error=None):
+    if request.method == 'GET':
+        return render_submission_form(error)
+    else:
+        return process_flag_submission(request.form["username"], request.form["flag"])
+
+def render_submission_form(error=None):
     users = get_all_users(g.db)
     return render_template('submit_flag.html', users=users, error=error)
 
-
-@app.route('/postflag', methods=['POST'])
-def postflag():
-    pprint(request.form)
-    user = find_user(g.db, request.form["username"])
+def process_flag_submission(username, flag):
+    user = find_user(g.db, username)
 
     ret_dict = {"success": False}
     if user is None:
@@ -54,14 +57,15 @@ def postflag():
         return jsonify(**ret_dict)
 
 
-    flag = user["current_flag"]
-    pprint(flag)
-    pprint(flag == request.form["flag"])
-    if (flag == request.form["flag"]):
-        add_user_next_score(g.db, user)
-        # For now we can just stop all running matches
-        stop_running_matches(conn)
+    current_flag = user["current_flag"]
+    pprint(current_flag)
+    pprint(current_flag == flag)
 
-    ret_dict["success"] = flag == request.form["flag"]
+    if (current_flag == flag):
+        add_user_next_score(g.db, user)
+        declare_winner(g.db, user["username"])
+        # For now we can just stop all running matches
+        stop_running_matches(g.db)
+        ret_dict["success"] = True
 
     return jsonify(**ret_dict)
