@@ -1,5 +1,7 @@
 import subprocess
 import os
+import xml.etree.ElementTree as et
+
 try:
     import libvirt
 except Exception as e:
@@ -27,15 +29,19 @@ def get_domains_and_snapshots(connection_str):
     all_domains = []
     connection = libvirt.open(connection_str)
 
-    domain_names = connection.listDefinedDomains(domain_name)
+    domain_names = connection.listDefinedDomains()
     for domain_name in domain_names:
         domain = connection.lookupByName(domain_name)
-        for snapshot in domain.snapshotListNames():
-            entry = {"domain_name" : domain_name, "snapshot_name" : snapshot}
-            insert_str = "python3 ctf_db.py add_challenge {} {} <flag1> ".format(domain_name, snapshot_name)
+        for snapshot_name in domain.snapshotListNames():
+            # get the snapshot description
+            snap = domain.snapshotLookupByName(snapshot_name)
+            root = et.fromstring(snap.getXMLDesc())
+            description = root.find("description").text
+
+            entry = {"domain_name" : domain_name, "snapshot_name" : snapshot_name, "description": description}
+            insert_str = "python3 ctf_db.py add_challenge {} {} {} ".format(domain_name, snapshot_name, description)
+
             print(insert_str)
             all_domains.append(entry)
 
     return all_domains
-
-
