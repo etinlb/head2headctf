@@ -1,9 +1,10 @@
-import sqlite3
-import time
 from argparse import ArgumentParser
-
 from app.db_operations import connect_db, get_challenge, start_challenge, register_user, insert_challenge, find_user, stop_running_matches, start_match
 from pprint import pprint
+
+import sqlite3
+import time
+import app.vm_management as vm
 
 DATABASE = "data.db"
 
@@ -105,6 +106,6 @@ if __name__ == "__main__":
         print("Inserting")
         insert_challenge(conn, args.snap_shot_name, args.scenario_name, args.category, args.difficulty, args.flag, score=args.score)
     elif args.command == "populate":
-        domains = get_domains_and_snapshots()
+        domains = vm.get_domains_and_snapshots()
         for domain in domains:
             insert_challenge(conn, domain["domain_name"], domain["snapshot_name"], "test", 1, domain["description"], score=50)

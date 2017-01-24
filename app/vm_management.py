@@ -36,10 +36,12 @@ def get_domains_and_snapshots(connection_str):
             # get the snapshot description
             snap = domain.snapshotLookupByName(snapshot_name)
             root = et.fromstring(snap.getXMLDesc())
-            description = root.find("description").text
+            description = root.find("description")
+            if description is not None:
+                description = description.text
 
-            entry = {"domain_name" : domain_name, "snapshot_name" : snapshot_name, "description": description}
-            insert_str = "python3 ctf_db.py add_challenge {} {} {} ".format(domain_name, snapshot_name, description)
+            entry = {"domain_name" : domain_name, "snapshot_name" : snapshot_name, "description": str(description)}
+            insert_str = "python3 ctf_db.py add_challenge {} {} {} ".format(domain_name, snapshot_name, str(description))
 
             print(insert_str)
             all_domains.append(entry)
