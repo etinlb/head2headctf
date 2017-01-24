@@ -12,7 +12,7 @@ DEFAULT_SCORE = 50
 
 conn = connect_db(DATABASE)
 
-def start_contest_by_snapshot(conn, username_1, username_2, user_1_domain,  user_2_domain, snapshot):
+def start_contest_by_snapshot(conn, username_1, username_2, user_1_domain,  user_2_domain, snapshot_1, snapshot_2):
     print(username_1)
     user_1 = find_user(conn, username_1)
     if user_1 is None:
@@ -24,15 +24,15 @@ def start_contest_by_snapshot(conn, username_1, username_2, user_1_domain,  user
         print("No user found for " + username_2)
         return False
 
-    user_1_challenge = get_challenge(conn, user_1_domain, snapshot)
-    user_2_challenge = get_challenge(conn, user_2_domain, snapshot)
+    user_1_challenge = get_challenge(conn, user_1_domain, snapshot_1)
+    user_2_challenge = get_challenge(conn, user_2_domain, snapshot_2)
 
     if user_1_challenge is None:
-        print("NO challenge with both " + user_1_domain + " and " + snapshot)
+        print("NO challenge with both " + user_1_domain + " and " + snapshot_1)
         return False
 
     if user_2_challenge is None:
-        print("NO challenge with both " + user_2_domain + " and " + snapshot)
+        print("NO challenge with both " + user_2_domain + " and " + snapshot_2)
         return False
 
     start_challenge(conn, user_1["id"], user_1_challenge["flag"], user_1_challenge["score"])
@@ -74,7 +74,8 @@ if __name__ == "__main__":
     start_parser.add_argument('username_2')
     start_parser.add_argument('domain_1')
     start_parser.add_argument('domain_2')
-    start_parser.add_argument('snapshot')
+    start_parser.add_argument('snapshot_1')
+    start_parser.add_argument('snapshot_2')
     # start_parser.add_argument('flag_1')
     # start_parser.add_argument('flag_2')
     # start_parser.add_argument('--score', dest='score', default=DEFAULT_SCORE, help="Score for the challenge")
@@ -102,7 +103,7 @@ if __name__ == "__main__":
     print(args.command)
     if args.command == "start":
         print("starting")
-        start_contest_by_snapshot(conn, args.username_1, args.username_2, args.domain_1, args.domain_2, args.snapshot)
+        start_contest_by_snapshot(conn, args.username_1, args.username_2, args.domain_1, args.domain_2, args.snapshot_1, args.snapshot_2)
     elif args.command == "add_user":
         print("starting")
         add_user(conn, args.username)

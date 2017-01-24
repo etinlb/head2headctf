@@ -4,6 +4,7 @@ from app.db_operations import *
 from pprint import pprint
 
 import app.vm_management as vm
+import ctf_db as hack
 
 from threading import Timer
 
@@ -47,12 +48,21 @@ def scoreboard():
 def post():
     # Get the parsed contents of the form data
     json = request.json
+    users = []
+    if len(json) != 2:
+        return "NOPE"
+
     for entry in json:
         try:
+            if (entry["username"] != "maint"):
+                users.append((entry["username"], entry["domain_name"], entry["snapshot_name"]))
             vm.start_domain("qemu+ssh://root@192.168.200.1/system", entry["domain_name"], entry["snapshot_name"])
         except Exception as e:
             pass
 
+    hack.start_contest_by_snapshot(g.db, users[0][0], users[1][0],
+                                         users[0][1], users[1][1],
+                                         users[0][2], users[1][2])
     t = Timer(TIMER_AMOUNT, kill_vms)
     t.start() # after 30 seconds, "hello, world" will be printed
 
@@ -93,12 +103,6 @@ def viewdomains_database(error=None):
     users = get_all_users(g.db)
     return render_template("domains.html", domains=domains, users=users)
 
-
-# @app.route("/startvm/<domainname>/<snapshot>", methods=['GET', 'POST'])
-# def start_domain(domainname="", snapshot=""):
-#     print(domainname)
-#     print(snapshot)
-#     vm.start_domain("qemu+ssh://root@192.168.200.1/system", domainname, snapshot)
 
 def render_submission_form(error=None):
     users = get_all_users(g.db)
