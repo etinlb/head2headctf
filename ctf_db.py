@@ -11,7 +11,7 @@ DEFAULT_SCORE = 50
 
 conn = connect_db(DATABASE)
 
-def start_contest_by_snapshot(conn, username_1, username_2, snap_shot_name):
+def start_contest_by_snapshot(conn, username_1, username_2, user_1_snap_shot_name,  user_2_snap_shot_name, scenario_name):
     print(username_1)
     user_1 = find_user(conn, username_1)
     if user_1 is None:
@@ -23,14 +23,19 @@ def start_contest_by_snapshot(conn, username_1, username_2, snap_shot_name):
         print("No user found for " + username_2)
         return False
 
-    challenge = get_challenge(conn, snap_shot_name)
+    user_1_challenge = get_challenge(conn, user_1_snap_shot_name, scenario_name)
+    user_2_challenge = get_challenge(conn, user_2_snap_shot_name, scenario_name)
 
-    if challenge is None:
-        print("NO challenge with " + snap_shot_name)
+    if user_1_challenge is None:
+        print("NO challenge with both " + user_1_snap_shot_name + " and " + scenario_name)
         return False
 
-    start_challenge(conn, user_1["id"], challenge["flag"], challenge["score"])
-    start_challenge(conn, user_2["id"], challenge["flag"], challenge["score"])
+    if user_2_challenge is None:
+        print("NO challenge with both " + user_2_snap_shot_name + " and " + scenario_name)
+        return False
+
+    start_challenge(conn, user_1["id"], user_1_challenge["flag"], user_1_challenge["score"])
+    start_challenge(conn, user_2["id"], user_2_challenge["flag"], user_2_challenge["score"])
 
     stop_running_matches(conn)
     start_match(conn, user_1["id"], user_2["id"], int(time.time()))
@@ -66,7 +71,9 @@ if __name__ == "__main__":
     start_parser = action_parser.add_parser("start", help="Start a head to head challenge")
     start_parser.add_argument('username_1')
     start_parser.add_argument('username_2')
-    start_parser.add_argument('snap_shot_name')
+    start_parser.add_argument('snap_shot_name_1')
+    start_parser.add_argument('snap_shot_name_2')
+    start_parser.add_argument('scenario_name')
     # start_parser.add_argument('flag_1')
     # start_parser.add_argument('flag_2')
     # start_parser.add_argument('--score', dest='score', default=DEFAULT_SCORE, help="Score for the challenge")
@@ -83,40 +90,21 @@ if __name__ == "__main__":
     add_challenge_parser.add_argument('-d', '--difficulty', dest='difficulty', default="", help="How hard")
     add_challenge_parser.add_argument('-s', '--score', dest='score', default=50, help="How many scores do they get?")
 
-
-    # add_challenge_parser.add_argument(label, description)
-
-
-    # parser.add_argument('--starting-delay', default=DEFAULT_START_DELAY, type=int,
-    #                     help='the amount of time in seconds between each attack check')
-
-    parser.add_argument('--prod', action='store_true',
-                        help='start server in production mode, i.e. available outside network)')
-
-    # parser.add_argument('--no-attack', action='store_true',
-    #                     help="Don't spawn attack thread")
+    populate_challenge = action_parser.add_parser("populate", help="Populate challenge database")
 
     args = parser.parse_args()
 
     print(args.command)
     if args.command == "start":
         print("starting")
-        start_contest_by_snapshot(conn, args.username_1, args.username_2, args.snap_shot_name)
+        start_contest_by_snapshot(conn, args.username_1, args.username_2, args.snap_shot_name_1, args.snap_shot_name_2, args.scenario_name)
     elif args.command == "add_user":
         print("starting")
         add_user(conn, args.username)
     elif args.command == "add_challenge":
         print("Inserting")
         insert_challenge(conn, args.snap_shot_name, args.scenario_name, args.category, args.difficulty, args.flag, score=args.score)
-
-
-    # if not args.no_attack:
-    #     attack_interval = args.attack_interval
-    #     starting_delay = args.starting_delay
-    #     attacker = AttackCoordinator(DATABASE,
-    #                                  attack_interval=attack_interval,
-    #                                  starting_delay=starting_delay)
-    #     log.info("Spawning attack thread")
-    #     t = Thread(target=attacker.attack_loop)
-    #     t.daemon = True  # catches ctrl-c interupts
-    #     t.start()
+    elif args.command == "populate":
+        domains = get_domains_and_snapshots()
+        for domain in domains:
+            insert_challenge(conn, domain["domain_name"], domain["snapshot_name"], "test", 1, domain["description"], score=50)
