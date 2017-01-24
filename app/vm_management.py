@@ -9,6 +9,7 @@ except Exception as e:
 
 KILL_VM_SCRIPT = "kill_shell.sh"
 
+
 def kill_vms():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     script = os.path.join(dir_path, KILL_VM_SCRIPT)
@@ -17,13 +18,14 @@ def kill_vms():
     print("killed?")
 
 
-def start_domain(connection_str, domain_name, snap_shot_name):
+def start_domain(connection_str, domain_name, snapshot_name):
     connection = libvirt.open("qemu+ssh://root@192.168.200.1/system")
     domain = connection.lookupByName(domain_name)
-    snapshot = domain.snapshotLookupByName(snap_shot_name)
+    snapshot = domain.snapshotLookupByName(snapshot_name)
 
     domain.revertToSnapshot(snapshot)
     domain.create()
+
 
 def get_domains_and_snapshots(connection_str):
     all_domains = []
@@ -44,7 +46,7 @@ def get_domains_and_snapshots(connection_str):
             if description is not None:
                 description = description.text
 
-            entry = {"domain_name" : domain_name, "snapshot_name" : snapshot_name, "description": str(description)}
+            entry = {"domain_name" : domain_name, "snapshot_name" : snapshot_name, "flag": str(description)}
             insert_str = "python3 ctf_db.py add_challenge {} {} {} ".format(domain_name, snapshot_name, str(description))
 
             print(insert_str)
