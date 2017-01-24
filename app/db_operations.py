@@ -50,6 +50,11 @@ def get_domain(conn, domain):
     return query_db(conn, "SELECT * FROM domain WHERE name = (?)", (domain,), True)
 
 
+def get_active_match(conn):
+    match_query = "SELECT * FROM match_data WHERE active = 1"
+    return query_db(conn, match_query, one=True)
+
+
 def get_snapshot(conn, snapshot):
     return query_db(conn, "SELECT * FROM snapshot WHERE name = (?)", (snapshot,), True)
 

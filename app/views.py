@@ -2,13 +2,14 @@ from flask import render_template, request, g, redirect, url_for, jsonify
 from app import app
 from app.db_operations import *
 from pprint import pprint
+from threading import Timer
 
 import app.vm_management as vm
 import ctf_db as hack
+import time
 
-from threading import Timer
 
-TIMER_AMOUNT = 480
+TIMER_AMOUNT = 600
 
 
 def kill_vms():
@@ -41,7 +42,20 @@ def teardown_request(exception):
 @app.route("/")
 def scoreboard():
     users = get_all_users(g.db)
-    return render_template('scoreboard.html', users=users)
+    active_match = get_active_match(g.db)
+    match_data = {}
+    if active_match is not None:
+        match_data["player_1"] = active_match["username1"]
+        match_data["player_2"] = active_match["username2"]
+        match_data["timeleft"] = TIMER_AMOUNT - (int(time.time()) - active_match["timestarted"])
+    else:
+        match_data = None
+
+    if match_data["timeleft"] < 0:
+        match_data = None
+
+    pprint(match_data)
+    return render_template('scoreboard.html', users=users, active_match=match_data)
 
 
 @app.route('/startvm', methods = ['POST'])
@@ -49,7 +63,7 @@ def post():
     # Get the parsed contents of the form data
     json = request.json
     users = []
-    if len(json) != 2:
+    if len(json) < 2:
         return "NOPE"
 
     for entry in json:
@@ -86,7 +100,7 @@ def submitflag(error=None):
     if request.method == 'GET':
         return render_submission_form(error)
     else:
-        return process_flag_submission(request.form["username"], request.form["flag"])
+        return process_flag_submission(request.form["username"], request.form["flag"].lower())
 
 
 @app.route("/viewdomains", methods=['GET'])
@@ -119,9 +133,9 @@ def process_flag_submission(username, flag):
 
     current_flag = user["current_flag"]
     pprint(current_flag)
-    pprint(current_flag == flag)
+    pprint(current_flag.lower() == flag.lower())
 
-    if (current_flag == flag):
+    if (current_flag.lower() == flag.lower()):
         add_user_next_score(g.db, user)
         declare_winner(g.db, user["username"])
         # For now we can just stop all running matches

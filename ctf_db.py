@@ -114,7 +114,7 @@ if __name__ == "__main__":
         connection_str = "qemu+ssh://root@192.168.200.1/system"
         domains = vm.get_domains_and_snapshots(connection_str)
         for domain in domains:
-            insert_challenge(conn, domain["domain_name"], domain["snapshot_name"], "test", 1, domain["description"], score=50)
+            insert_challenge(conn, domain["domain_name"], domain["snapshot_name"], "test", 1, domain["flag"], score=50)
     elif args.command == "add_snapshot":
         domain = get_domain(conn, args.domain)
         pprint(domain)
