@@ -46,6 +46,14 @@ def submitflag(error=None):
     else:
         return process_flag_submission(request.form["username"], request.form["flag"])
 
+
+@app.route("/viewdomains", methods=['GET'])
+def viewdomains(error=None):
+    connection_str = "qemu+ssh://root@192.168.200.1/system"
+    domains = get_domains_and_snapshots("qemu+ssh://root@192.168.200.1/system")
+    return render_template("domains.html", domains=domains)
+
+
 @app.route("/startvm/<domainname>/<snapshot>", methods=['GET', 'POST'])
 def start_domain(domainname="", snapshot=""):
     print(domainname)

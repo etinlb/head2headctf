@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}DOMAINS{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <div class="scanlines">
+    <table class="table table-striped table-hover ">
+        <thead>
+            <th><h3>domain name</h3></th>
+            <th><h3>snapshot name</h3></th>
+        </thead>
+        {% for domain in domains|sort(attribute='domain_name', reverse=True) %}
+            <tr>
+                <td>{{domain["domain_name"]}}</td>
+                <td>{{domain["snapshot_name"]}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock %}
