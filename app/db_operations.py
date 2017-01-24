@@ -30,12 +30,37 @@ def declare_winner(conn, username):
     return execute_trans(conn, set_winner_query, (winner_id, match["id"]))
 
 
-def insert_challenge(conn, snap_shot_name, scenario_name, category, difficulty, flag, score=50, description=""):
-    insert_query = "INSERT INTO challenge (snap_shot_name, scenario_name, description, category, difficulty, score, flag) VALUES (?,?,?,?,?,?,?)"
-    return execute_trans(conn, insert_query, (snap_shot_name, scenario_name, description, category, difficulty, score, flag))
+def insert_challenge(conn, domain, snapshot, category, difficulty, flag, score=50, description=""):
+    insert_query = "INSERT INTO challenge (domain, snapshot, description, category, difficulty, score, flag) VALUES (?,?,?,?,?,?,?)"
+    return execute_trans(conn, insert_query,
+                         (domain, snapshot, description, category, difficulty, score, flag))
 
-def get_challenge(conn, snap_shot_name, scenario_name):
-    return query_db(conn, "SELECT * FROM challenge WHERE snap_shot_name = (?) and scenario_name = (?)", (snap_shot_name,scenario_name), True)
+
+def insert_domain(conn, domain):
+    insert_query = "INSERT INTO domain (name) VALUES (?)"
+    return execute_trans(conn, insert_query, (domain,))
+
+
+def insert_snapshot(conn, snapshot):
+    insert_query = "INSERT INTO snapshot (name) VALUES (?)"
+    return execute_trans(conn, insert_query, (snapshot,))
+
+
+def get_domain(conn, domain):
+    return query_db(conn, "SELECT * FROM domain WHERE name = (?)", (domain,), True)
+
+
+def get_snapshot(conn, snapshot):
+    return query_db(conn, "SELECT * FROM snapshot WHERE name = (?)", (snapshot,), True)
+
+
+def insert_domain_snapshot_join(conn, domain_id, snapshot_id):
+    insert_query = "INSERT INTO domain_snapshot (domain_id, snapshot_id) VALUES (?,?)"
+    return execute_trans(conn, insert_query, (domain_id, snapshot_id))
+
+
+def get_challenge(conn, domain, snapshot):
+    return query_db(conn, "SELECT * FROM challenge WHERE domain = (?) and snapshot = (?)", (domain,snapshot), True)
 
 
 def stop_challenge(conn, user_id):

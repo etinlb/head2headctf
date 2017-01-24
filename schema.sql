@@ -29,8 +29,8 @@ create table challenge_catogory(
 
 drop table if exists challenge;
 create table challenge (
-  snap_shot_name text,
-  scenario_name text,
+  domain text,
+  snapshot text,
   description text,
   category text,
   category_id integer,
@@ -38,19 +38,26 @@ create table challenge (
   flag text,
   score integer DEFAULT 50,
   FOREIGN KEY(category_id) REFERENCES challenge_catogory,
-  PRIMARY KEY(snap_shot_name, scenario_name)
+  PRIMARY KEY(domain, snapshot)
 );
 
--- drop table if exists flags;
--- create table flags (
---   challenge_id integer,
---   user_id integer,
---   flag text NOT NULL,
+create table domain_snapshot (
+  snapshot_id integer,
+  domain_id integer,
+  FOREIGN KEY(snapshot_id) REFERENCES snapshot,
+  FOREIGN KEY(domain_id) REFERENCES domain,
+  PRIMARY KEY(domain__id, snapshot_id)
+);
 
---   PRIMARY KEY (user_id, challenge_id),
---   FOREIGN KEY(user_id) REFERENCES users(id),
---   FOREIGN KEY(challenge_id) REFERENCES challenge(id)
--- );
+create table snapshot (
+  id integer primary key autoincrement,
+  name text NOT NULL UNIQUE
+);
+
+create table domain (
+  id integer primary key autoincrement,
+  name text NOT NULL UNIQUE
+);
 
 drop table if exists admin;
 create table admin(
@@ -70,3 +77,11 @@ CREATE VIEW match_data AS SELECT
 FROM match
     LEFT JOIN users user1 ON match.user_id_1=user1.id
     LEFT JOIN users user2 ON match.user_id_2=user2.id;
+
+CREATE VIEW vm_data AS SELECT
+    snapshot.name,
+    domain.name,
+    snapshot.id,
+    domain.id
+FROM snapshot, domain, domain_snapshot
+WHERE snapshot.id = domain_snapshot.snapshot_id and domain.id = domain_snapshot.domain_id;
