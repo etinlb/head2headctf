@@ -106,6 +106,7 @@ if __name__ == "__main__":
         print("Inserting")
         insert_challenge(conn, args.snap_shot_name, args.scenario_name, args.category, args.difficulty, args.flag, score=args.score)
     elif args.command == "populate":
-        domains = vm.get_domains_and_snapshots()
+        connection_str = "qemu+ssh://root@192.168.200.1/system"
+        domains = vm.get_domains_and_snapshots(connection_str)
         for domain in domains:
             insert_challenge(conn, domain["domain_name"], domain["snapshot_name"], "test", 1, domain["description"], score=50)
