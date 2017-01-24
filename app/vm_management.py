@@ -33,6 +33,10 @@ def get_domains_and_snapshots(connection_str):
     for domain_name in domain_names:
         domain = connection.lookupByName(domain_name)
         for snapshot_name in domain.snapshotListNames():
+            if not snapshot_name.lower().startswith("prod"):
+                # only grep on prod
+                continue
+
             # get the snapshot description
             snap = domain.snapshotLookupByName(snapshot_name)
             root = et.fromstring(snap.getXMLDesc())
