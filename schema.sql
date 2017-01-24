@@ -29,14 +29,16 @@ create table challenge_catogory(
 
 drop table if exists challenge;
 create table challenge (
-  snap_shot_name text primary key,
+  snap_shot_name text,
+  scenario_name text,
   description text,
   category text,
   category_id integer,
   difficulty integer,
   flag text,
   score integer DEFAULT 50,
-  FOREIGN KEY(category_id) REFERENCES challenge_catogory
+  FOREIGN KEY(category_id) REFERENCES challenge_catogory,
+  PRIMARY KEY(snap_shot_name, scenario_name)
 );
 
 -- drop table if exists flags;

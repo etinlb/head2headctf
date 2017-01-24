@@ -30,9 +30,9 @@ def declare_winner(conn, username):
     return execute_trans(conn, set_winner_query, (winner_id, match["id"]))
 
 
-def insert_challenge(conn, snap_shot_name, category, difficulty, flag, score=50, description=""):
-    insert_query = "INSERT INTO challenge (snap_shot_name, description, category, difficulty, score, flag) VALUES (?,?,?,?,?,?)"
-    return execute_trans(conn, insert_query, (snap_shot_name, description, category, difficulty, score, flag))
+def insert_challenge(conn, snap_shot_name, scenario_name, category, difficulty, flag, score=50, description=""):
+    insert_query = "INSERT INTO challenge (snap_shot_name, scenario_name, description, category, difficulty, score, flag) VALUES (?,?,?,?,?,?,?)"
+    return execute_trans(conn, insert_query, (snap_shot_name, scenario_name, description, category, difficulty, score, flag))
 
 def get_challenge(conn, snap_shot_name):
     return query_db(conn, "SELECT * FROM challenge WHERE snap_shot_name = (?)", (snap_shot_name,), True)

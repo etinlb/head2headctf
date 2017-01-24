@@ -77,10 +77,11 @@ if __name__ == "__main__":
 
     add_challenge_parser = action_parser.add_parser("add_challenge")
     add_challenge_parser.add_argument('snap_shot_name')
+    add_challenge_parser.add_argument('scenario_name')
+    add_challenge_parser.add_argument('flag')
     add_challenge_parser.add_argument('-c', '--category', dest='category', default="", help="Category of challenge")
     add_challenge_parser.add_argument('-d', '--difficulty', dest='difficulty', default="", help="How hard")
     add_challenge_parser.add_argument('-s', '--score', dest='score', default=50, help="How many scores do they get?")
-    add_challenge_parser.add_argument('flag')
 
 
     # add_challenge_parser.add_argument(label, description)
@@ -106,7 +107,7 @@ if __name__ == "__main__":
         add_user(conn, args.username)
     elif args.command == "add_challenge":
         print("Inserting")
-        insert_challenge(conn, args.snap_shot_name, args.category, args.difficulty, args.flag, score=args.score)
+        insert_challenge(conn, args.snap_shot_name, args.scenario_name, args.category, args.difficulty, args.flag, score=args.score)
 
 
     # if not args.no_attack:
