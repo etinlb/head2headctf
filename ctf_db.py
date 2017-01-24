@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from app.db_operations import connect_db, get_challenge, start_challenge, register_user, insert_challenge, find_user, stop_running_matches, start_match
+from app.db_operations import *
 from pprint import pprint
 
 import sqlite3
@@ -12,7 +12,7 @@ DEFAULT_SCORE = 50
 
 conn = connect_db(DATABASE)
 
-def start_contest_by_snapshot(conn, username_1, username_2, user_1_snap_shot_name,  user_2_snap_shot_name, scenario_name):
+def start_contest_by_snapshot(conn, username_1, username_2, user_1_domain,  user_2_domain, snapshot):
     print(username_1)
     user_1 = find_user(conn, username_1)
     if user_1 is None:
@@ -24,15 +24,15 @@ def start_contest_by_snapshot(conn, username_1, username_2, user_1_snap_shot_nam
         print("No user found for " + username_2)
         return False
 
-    user_1_challenge = get_challenge(conn, user_1_snap_shot_name, scenario_name)
-    user_2_challenge = get_challenge(conn, user_2_snap_shot_name, scenario_name)
+    user_1_challenge = get_challenge(conn, user_1_domain, snapshot)
+    user_2_challenge = get_challenge(conn, user_2_domain, snapshot)
 
     if user_1_challenge is None:
-        print("NO challenge with both " + user_1_snap_shot_name + " and " + scenario_name)
+        print("NO challenge with both " + user_1_domain + " and " + snapshot)
         return False
 
     if user_2_challenge is None:
-        print("NO challenge with both " + user_2_snap_shot_name + " and " + scenario_name)
+        print("NO challenge with both " + user_2_domain + " and " + snapshot)
         return False
 
     start_challenge(conn, user_1["id"], user_1_challenge["flag"], user_1_challenge["score"])
@@ -72,9 +72,9 @@ if __name__ == "__main__":
     start_parser = action_parser.add_parser("start", help="Start a head to head challenge")
     start_parser.add_argument('username_1')
     start_parser.add_argument('username_2')
-    start_parser.add_argument('snap_shot_name_1')
-    start_parser.add_argument('snap_shot_name_2')
-    start_parser.add_argument('scenario_name')
+    start_parser.add_argument('domain_1')
+    start_parser.add_argument('domain_2')
+    start_parser.add_argument('snapshot')
     # start_parser.add_argument('flag_1')
     # start_parser.add_argument('flag_2')
     # start_parser.add_argument('--score', dest='score', default=DEFAULT_SCORE, help="Score for the challenge")
@@ -82,10 +82,14 @@ if __name__ == "__main__":
     add_user_parser = action_parser.add_parser("add_user")
     add_user_parser.add_argument('username')
 
+    add_snapshot = action_parser.add_parser("add_snapshot")
+    add_snapshot.add_argument('domain')
+    add_snapshot.add_argument('snapshot')
+
 
     add_challenge_parser = action_parser.add_parser("add_challenge")
-    add_challenge_parser.add_argument('snap_shot_name')
-    add_challenge_parser.add_argument('scenario_name')
+    add_challenge_parser.add_argument('domain')
+    add_challenge_parser.add_argument('snapshot')
     add_challenge_parser.add_argument('flag')
     add_challenge_parser.add_argument('-c', '--category', dest='category', default="", help="Category of challenge")
     add_challenge_parser.add_argument('-d', '--difficulty', dest='difficulty', default="", help="How hard")
@@ -98,15 +102,31 @@ if __name__ == "__main__":
     print(args.command)
     if args.command == "start":
         print("starting")
-        start_contest_by_snapshot(conn, args.username_1, args.username_2, args.snap_shot_name_1, args.snap_shot_name_2, args.scenario_name)
+        start_contest_by_snapshot(conn, args.username_1, args.username_2, args.domain_1, args.domain_2, args.snapshot)
     elif args.command == "add_user":
         print("starting")
         add_user(conn, args.username)
     elif args.command == "add_challenge":
         print("Inserting")
-        insert_challenge(conn, args.snap_shot_name, args.scenario_name, args.category, args.difficulty, args.flag, score=args.score)
+        insert_challenge(conn, args.domain, args.snapshot, args.category, args.difficulty, args.flag, score=args.score)
     elif args.command == "populate":
         connection_str = "qemu+ssh://root@192.168.200.1/system"
         domains = vm.get_domains_and_snapshots(connection_str)
         for domain in domains:
             insert_challenge(conn, domain["domain_name"], domain["snapshot_name"], "test", 1, domain["description"], score=50)
+    elif args.command == "add_snapshot":
+        domain = get_domain(conn, args.domain)
+        pprint(domain)
+        snapshot = get_snapshot(conn, args.snapshot)
+
+        if domain is None:
+            domain_id = insert_domain(conn, args.domain)
+        else:
+            domain_id = domain["id"]
+
+        if snapshot is None:
+            snapshot_id = insert_snapshot(conn, args.snapshot)
+        else:
+            snapshot_id = snapshot["id"]
+
+        insert_domain_snapshot_join(conn, domain_id, snapshot_id)
