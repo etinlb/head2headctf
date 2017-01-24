@@ -46,6 +46,12 @@ def submitflag(error=None):
     else:
         return process_flag_submission(request.form["username"], request.form["flag"])
 
+@app.route("/startvm/<domainname>/<snapshot>", methods=['GET', 'POST'])
+def start_domain(domainname="", snapshot=""):
+    print(domainname)
+    print(snapshot)
+    vm.start_domain("qemu+ssh://root@192.168.200.1/system", domainname, snapshot)
+
 def render_submission_form(error=None):
     users = get_all_users(g.db)
     return render_template('submit_flag.html', users=users, error=error)
