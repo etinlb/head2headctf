@@ -18,7 +18,7 @@ def declare_winner(conn, username):
 
     if match is None:
         print("THAT USER WASN'T IN A MATCH")
-        return
+        return None
 
     set_winner_query = "UPDATE match set winner = (?), active = 0 WHERE id = (?)"
 
@@ -34,8 +34,8 @@ def insert_challenge(conn, snap_shot_name, scenario_name, category, difficulty, 
     insert_query = "INSERT INTO challenge (snap_shot_name, scenario_name, description, category, difficulty, score, flag) VALUES (?,?,?,?,?,?,?)"
     return execute_trans(conn, insert_query, (snap_shot_name, scenario_name, description, category, difficulty, score, flag))
 
-def get_challenge(conn, snap_shot_name):
-    return query_db(conn, "SELECT * FROM challenge WHERE snap_shot_name = (?)", (snap_shot_name,), True)
+def get_challenge(conn, snap_shot_name, scenario_name):
+    return query_db(conn, "SELECT * FROM challenge WHERE snap_shot_name = (?) and scenario_name = (?)", (snap_shot_name,scenario_name), True)
 
 
 def stop_challenge(conn, user_id):
