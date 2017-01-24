@@ -50,7 +50,7 @@ def submitflag(error=None):
 @app.route("/viewdomains", methods=['GET'])
 def viewdomains(error=None):
     connection_str = "qemu+ssh://root@192.168.200.1/system"
-    domains = get_domains_and_snapshots("qemu+ssh://root@192.168.200.1/system")
+    domains = vm.get_domains_and_snapshots("qemu+ssh://root@192.168.200.1/system")
     users = get_all_users(g.db)
     return render_template("domains.html", domains=domains, users=users)
 
