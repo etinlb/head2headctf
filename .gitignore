@@ -9,3 +9,5 @@ server.key.org
 server.crt
 
 *.db
+
+setup_challenges.sh

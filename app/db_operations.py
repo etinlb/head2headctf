@@ -30,6 +30,13 @@ def declare_winner(conn, username):
     return execute_trans(conn, set_winner_query, (winner_id, match["id"]))
 
 
+def insert_challenge(conn, snap_shot_name, category, difficulty, flag, score=50, description=""):
+    insert_query = "INSERT INTO challenge (snap_shot_name, description, category, difficulty, score, flag) VALUES (?,?,?,?,?,?)"
+    return execute_trans(conn, insert_query, (snap_shot_name, description, category, difficulty, score, flag))
+
+def get_challenge(conn, snap_shot_name):
+    return query_db(conn, "SELECT * FROM challenge WHERE snap_shot_name = (?)", (snap_shot_name,), True)
+
 
 def stop_challenge(conn, user_id):
     return execute_trans(conn, "UPDATE USERS set next_score = 0, current_flag = '' where id = (?)",
@@ -63,9 +70,6 @@ def execute_trans(conn, statement, args_tup):
     return False
 
 
-def insert_challenge(conn, label, description):
-    return execute_trans(conn, "INSERT INTO challenge (label, description) " +
-                               "VALUES (?,?)", (label, description))
 
 
 def register_user(conn, username):
