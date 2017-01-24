@@ -59,6 +59,10 @@ def insert_domain_snapshot_join(conn, domain_id, snapshot_id):
     return execute_trans(conn, insert_query, (domain_id, snapshot_id))
 
 
+def get_all_domain_data(conn):
+    return query_db(conn, "SELECT * FROM vm_data")
+
+
 def get_challenge(conn, domain, snapshot):
     return query_db(conn, "SELECT * FROM challenge WHERE domain = (?) and snapshot = (?)", (domain,snapshot), True)
 
@@ -75,11 +79,14 @@ def set_user_score(conn, user, score):
 def add_user_next_score(conn, user):
     return set_user_score(conn, user, user["score"] + user["next_score"])
 
+
 def start_trans(conn):
     return conn.cursor()
 
+
 def commit_transaction(conn):
     return conn.commit()
+
 
 def execute_trans(conn, statement, args_tup):
     try:

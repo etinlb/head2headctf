@@ -5,6 +5,23 @@ from pprint import pprint
 
 import app.vm_management as vm
 
+from threading import Timer
+
+TIMER_AMOUNT = 480
+
+
+def kill_vms():
+    vm.kill_vms()
+    db = connect_db(DATABASE, sqlite3.Row)
+    try:
+        stop_running_matches(db)
+    except Exception as e:
+        pass
+
+    if db is not None:
+        db.close()
+
+
 DATABASE = "data.db"
 
 
@@ -25,6 +42,21 @@ def scoreboard():
     users = get_all_users(g.db)
     return render_template('scoreboard.html', users=users)
 
+
+@app.route('/startvm', methods = ['POST'])
+def post():
+    # Get the parsed contents of the form data
+    json = request.json
+    for entry in json:
+        try:
+            vm.start_domain("qemu+ssh://root@192.168.200.1/system", entry["domain_name"], entry["snapshot_name"])
+        except Exception as e:
+            pass
+
+    t = Timer(TIMER_AMOUNT, kill_vms)
+    t.start() # after 30 seconds, "hello, world" will be printed
+
+    return "Started"
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -55,6 +87,13 @@ def viewdomains(error=None):
     return render_template("domains.html", domains=domains, users=users)
 
 
+@app.route("/viewdomains_database", methods=['GET'])
+def viewdomains_database(error=None):
+    domains = get_all_domain_data(g.db)
+    users = get_all_users(g.db)
+    return render_template("domains.html", domains=domains, users=users)
+
+
 # @app.route("/startvm/<domainname>/<snapshot>", methods=['GET', 'POST'])
 # def start_domain(domainname="", snapshot=""):
 #     print(domainname)
@@ -65,6 +104,7 @@ def render_submission_form(error=None):
     users = get_all_users(g.db)
     return render_template('submit_flag.html', users=users, error=error)
 
+
 def process_flag_submission(username, flag):
     user = find_user(g.db, username)
 
@@ -72,7 +112,6 @@ def process_flag_submission(username, flag):
     if user is None:
         ret_dict["error_msg"] = "NO USER BY THAT NAME"
         return jsonify(**ret_dict)
-
 
     current_flag = user["current_flag"]
     pprint(current_flag)

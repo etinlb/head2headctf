@@ -78,10 +78,11 @@ FROM match
     LEFT JOIN users user1 ON match.user_id_1=user1.id
     LEFT JOIN users user2 ON match.user_id_2=user2.id;
 
+drop view if exists vm_data;
 CREATE VIEW vm_data AS SELECT
-    snapshot.name,
-    domain.name,
-    snapshot.id,
-    domain.id
+    snapshot.name AS snapshot_name,
+    domain.name AS domain_name,
+    snapshot.id AS snapshot_id,
+    domain.id AS domain_id
 FROM snapshot, domain, domain_snapshot
-WHERE snapshot.id = domain_snapshot.snapshot_id and domain.id = domain_snapshot.domain_id;
+WHERE snapshot_id = domain_snapshot.snapshot_id and domain_id = domain_snapshot.domain_id;
