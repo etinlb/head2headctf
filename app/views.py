@@ -3,6 +3,8 @@ from app import app
 from app.db_operations import *
 from pprint import pprint
 
+import app.vm_management as vm
+
 DATABASE = "data.db"
 
 
@@ -66,6 +68,7 @@ def process_flag_submission(username, flag):
         declare_winner(g.db, user["username"])
         # For now we can just stop all running matches
         stop_running_matches(g.db)
+        vm.kill_vms()
         ret_dict["success"] = True
 
     return jsonify(**ret_dict)
