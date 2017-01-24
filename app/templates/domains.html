@@ -2,6 +2,9 @@
 {% block title %}DOMAINS{% endblock %}
 {% block head %}
     {{ super() }}
+    <script src="{{ url_for('static', filename='js/start_challenge.js') }}" type="text/javascript"></script>
+
+
 {% endblock %}
 {% block content %}
     <div class="scanlines">
@@ -9,13 +12,25 @@
         <thead>
             <th><h3>domain name</h3></th>
             <th><h3>snapshot name</h3></th>
+            <th><h3>flag</h3></th>
+            <th><h3>user</h3></th>
         </thead>
         {% for domain in domains|sort(attribute='domain_name', reverse=True) %}
             <tr>
                 <td>{{domain["domain_name"]}}</td>
                 <td>{{domain["snapshot_name"]}}</td>
+                <td>{{domain["description"]}}</td>
+                <td><select id="username" name="username" class="eightbit-font eightbit-input form-control">
+                      <option value="--">--</option>
+                    {% for user in users|sort(attribute='username') %}
+                      <option value="{{user['username']}}">{{user['username']}}</option>
+                    {% endfor %}
+                    </select>
+                </td>
             </tr>
         {% endfor %}
     </table>
+    <button class="btn btn-primary eightbit-font eightbit-btn" type=submit onclick="start_challenge();">Capture</button>
+
     </div>
 {% endblock %}

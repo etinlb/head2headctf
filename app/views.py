@@ -51,14 +51,15 @@ def submitflag(error=None):
 def viewdomains(error=None):
     connection_str = "qemu+ssh://root@192.168.200.1/system"
     domains = get_domains_and_snapshots("qemu+ssh://root@192.168.200.1/system")
-    return render_template("domains.html", domains=domains)
+    users = get_all_users(g.db)
+    return render_template("domains.html", domains=domains, users=users)
 
 
-@app.route("/startvm/<domainname>/<snapshot>", methods=['GET', 'POST'])
-def start_domain(domainname="", snapshot=""):
-    print(domainname)
-    print(snapshot)
-    vm.start_domain("qemu+ssh://root@192.168.200.1/system", domainname, snapshot)
+# @app.route("/startvm/<domainname>/<snapshot>", methods=['GET', 'POST'])
+# def start_domain(domainname="", snapshot=""):
+#     print(domainname)
+#     print(snapshot)
+#     vm.start_domain("qemu+ssh://root@192.168.200.1/system", domainname, snapshot)
 
 def render_submission_form(error=None):
     users = get_all_users(g.db)
