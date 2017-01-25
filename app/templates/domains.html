@@ -15,7 +15,7 @@
             <!-- <th><h3>flag</h3></th> -->
             <th><h3>user</h3></th>
         </thead>
-        {% for domain in domains|sort(attribute='domain_name', reverse=True) %}
+        {% for domain in domains|sort(attribute='snapshot_name', reverse=True) %}
             <tr>
                 <td onclick='manage_domaion({{domain["domain_name"]}})'>{{domain["domain_name"]}}</td>
                 <td>{{domain["snapshot_name"]}}</td>
