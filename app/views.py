@@ -22,6 +22,10 @@ def kill_vms():
         db.close()
 
 
+# Keep track of timer
+app.timer = Timer(app.config["TIMER_AMOUNT"], kill_vms)
+
+
 @app.before_request
 def before_request():
     g.db = connect_db(app.config["DATABASE_FILE"], sqlite3.Row)
@@ -40,6 +44,7 @@ def scoreboard():
     users = get_all_users(g.db)
     active_match = get_active_match(g.db)
     match_data = {}
+
     if active_match is not None:
         match_data["player_1"] = active_match["username1"]
         match_data["player_2"] = active_match["username2"]
@@ -47,7 +52,7 @@ def scoreboard():
     else:
         match_data = None
 
-    if match_data["timeleft"] < 0:
+    if match_data is not None and match_data["timeleft"] < 0:
         match_data = None
 
     pprint(match_data)
@@ -73,8 +78,7 @@ def post():
     hack.start_contest_by_snapshot(g.db, users[0][0], users[1][0],
                                          users[0][1], users[1][1],
                                          users[0][2], users[1][2])
-    t = Timer(TIMER_AMOUNT, kill_vms)
-    t.start()
+    app.timer.start()
 
     return "Started"
 
@@ -137,6 +141,7 @@ def process_flag_submission(username, flag):
         declare_winner(g.db, user["username"])
         # For now we can just stop all running matches
         stop_running_matches(g.db)
+        app.timer.cancel()
         vm.kill_vms()
         ret_dict["success"] = True
 
