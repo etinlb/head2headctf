@@ -7,12 +7,12 @@ CREATE TABLE match (
   timestarted integer, -- Handle timestamp else where
   score integer,
   winner integer,
-  FOREIGN KEY(user_id_1) REFERENCES users,
-  FOREIGN KEY(user_id_2) REFERENCES users
+  FOREIGN KEY(user_id_1) REFERENCES user,
+  FOREIGN KEY(user_id_2) REFERENCES user
 );
 
-drop table if exists users;
-CREATE TABLE users(
+drop table if exists user;
+CREATE TABLE user(
   id integer primary key autoincrement,
   username text NOT NULL UNIQUE,
   score integer DEFAULT 0,
@@ -75,8 +75,8 @@ CREATE VIEW match_data AS SELECT
     user1.username AS username1,
     user2.username AS username2
 FROM match
-    LEFT JOIN users user1 ON match.user_id_1=user1.id
-    LEFT JOIN users user2 ON match.user_id_2=user2.id;
+    LEFT JOIN user user1 ON match.user_id_1=user1.id
+    LEFT JOIN user user2 ON match.user_id_2=user2.id;
 
 drop view if exists vm_data;
 CREATE VIEW vm_data AS SELECT

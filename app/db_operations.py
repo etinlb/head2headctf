@@ -1,5 +1,6 @@
-import sqlite3
 from pprint import pprint
+from app.models import models
+import sqlite3
 """
 Container for functions that do database things
 """
@@ -73,12 +74,12 @@ def get_challenge(conn, domain, snapshot):
 
 
 def stop_challenge(conn, user_id):
-    return execute_trans(conn, "UPDATE USERS set next_score = 0, current_flag = '' where id = (?)",
+    return execute_trans(conn, "UPDATE USER set next_score = 0, current_flag = '' where id = (?)",
                          (user_id,))
 
 
 def set_user_score(conn, user, score):
-    return execute_trans(conn, "UPDATE USERS set score = (?) where id = (?)", (score, user["id"]))
+    return execute_trans(conn, "UPDATE USER set score = (?) where id = (?)", (score, user["id"]))
 
 
 def add_user_next_score(conn, user):
@@ -107,10 +108,14 @@ def execute_trans(conn, statement, args_tup):
     return False
 
 
+def register_user(db_session, username, commit=True):
+    user = models.User(username)
+    db_session.add(user)
 
+    if commit:
+        db_session.commit()
 
-def register_user(conn, username):
-    return execute_trans(conn, "INSERT INTO users (username) VALUES (?)", (username,))
+    return user
 
 
 def get_current_flag(conn, user_id, challenge_id):
@@ -120,6 +125,7 @@ def get_current_flag(conn, user_id, challenge_id):
         return None
 
     return flag["flag"]
+
 
 def stop_match(conn, match_id, winner=None, score=0):
     stop_query = ""
@@ -161,13 +167,13 @@ def start_match(conn, user_id_1, user_id_2, timestamp):
 
 def start_challenge(conn, user_id, flag, next_score):
     # set current flag in user
-    update_user_query = "UPDATE USERS set current_flag = (?), next_score = (?) where id = (?)"
+    update_user_query = "UPDATE USER set current_flag = (?), next_score = (?) where id = (?)"
 
     return execute_trans(conn, update_user_query, (flag, next_score, user_id))
 
 
 def get_all_users(conn):
-    user_query = "SELECT * FROM USERS"
+    user_query = "SELECT * FROM USER"
     return query_db(conn, user_query)
 
 
@@ -181,7 +187,7 @@ def query_db(conn, query, args=(), one=False):
 
 
 def find_user(conn, username):
-    query = "SELECT * FROM USERS WHERE username = (?)"
+    query = "SELECT * FROM USER WHERE username = (?)"
     user = query_db(conn, query, args=(username,), one=True)
     # pprint(user["username"])
     return user

@@ -1,5 +1,6 @@
 from flask import render_template, request, g, redirect, url_for, jsonify
 from app import app
+from app import db
 from app.db_operations import *
 from pprint import pprint
 from threading import Timer
@@ -9,12 +10,9 @@ import ctf_db as hack
 import time
 
 
-TIMER_AMOUNT = 600
-
-
 def kill_vms():
     vm.kill_vms()
-    db = connect_db(DATABASE, sqlite3.Row)
+    db = connect_db(app.config["DATABASE_FILE"], sqlite3.Row)
     try:
         stop_running_matches(db)
     except Exception as e:
@@ -24,12 +22,9 @@ def kill_vms():
         db.close()
 
 
-DATABASE = "data.db"
-
-
 @app.before_request
 def before_request():
-    g.db = connect_db(DATABASE, sqlite3.Row)
+    g.db = connect_db(app.config["DATABASE_FILE"], sqlite3.Row)
 
 
 @app.teardown_request
@@ -41,13 +36,14 @@ def teardown_request(exception):
 
 @app.route("/")
 def scoreboard():
+    pprint(app.config)
     users = get_all_users(g.db)
     active_match = get_active_match(g.db)
     match_data = {}
     if active_match is not None:
         match_data["player_1"] = active_match["username1"]
         match_data["player_2"] = active_match["username2"]
-        match_data["timeleft"] = TIMER_AMOUNT - (int(time.time()) - active_match["timestarted"])
+        match_data["timeleft"] = app.config["TIMER_AMOUNT"] - (int(time.time()) - active_match["timestarted"])
     else:
         match_data = None
 
@@ -58,7 +54,7 @@ def scoreboard():
     return render_template('scoreboard.html', users=users, active_match=match_data)
 
 
-@app.route('/startvm', methods = ['POST'])
+@app.route('/startvm', methods=['POST'])
 def post():
     # Get the parsed contents of the form data
     json = request.json
@@ -78,9 +74,10 @@ def post():
                                          users[0][1], users[1][1],
                                          users[0][2], users[1][2])
     t = Timer(TIMER_AMOUNT, kill_vms)
-    t.start() # after 30 seconds, "hello, world" will be printed
+    t.start()
 
     return "Started"
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -91,7 +88,7 @@ def register():
     if find_user(g.db, request.form["username"]):
         return "user by that name already exists!"
     else:
-        register_user(g.db, request.form["username"])
+        register_user(db.session, request.form["username"])
         return redirect(url_for('scoreboard', _external=True, _scheme='https'))
 
 
