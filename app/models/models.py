@@ -32,3 +32,22 @@ class User(db.Model):
 
     def add_user_next_score(self, next_score):
         self.score += next_score
+
+
+class Match(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    active = db.Column(db.Integer, nullable=False)
+    user_id_1 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id_2 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestarted = db.Column(db.Integer)
+    score = db.Column(db.Integer)
+    winner = db.Column(db.Integer)
+
+    def __init__(self, user_id_1, user_id_2, active=0):
+        self.user_id_1 = user_id_1
+        self.user_id_2 = user_id_2
+        self.active = active
+
+    # @staticmethod
+    # def create_and_start_match(db_session, user_id_1, user_id_2):
+    #     mat

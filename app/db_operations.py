@@ -186,6 +186,18 @@ def query_db(conn, query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 
+def get_active_match_for_user(db_session, username):
+    user = models.User.get_user(username)
+
+    if user is None:
+        return None
+
+    match = db_session.query(models.Match).filter(models.Match.active == 1,
+                                                  models.Match.user_id_1 == 2 or
+                                                  models.Match.user_id_2 == user.id)
+    return match
+
+
 def find_user(conn, username):
     query = "SELECT * FROM USER WHERE username = (?)"
     user = query_db(conn, query, args=(username,), one=True)
