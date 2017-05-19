@@ -37,6 +37,17 @@ def teardown_request(exception):
     if db is not None:
         db.close()
 
+@app.route("/user/<username>")
+def user_data(username):
+    match = get_active_match(db.session)
+    if match is None:
+        return "Not in match"
+
+    # Todo, grab from the match object
+    match_info = {"active": match.active, "user_id_1": match.user_id_1,
+                  "user_id_2": match.user_id_2}
+
+    return jsonify(**match_info)
 
 @app.route("/")
 def scoreboard():
