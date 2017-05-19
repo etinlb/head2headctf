@@ -1,63 +1,77 @@
-.section{
-width: 200px;
-float: left;
-border: 10px solid #FF6600;
-background: #000;
-position: relative;
+.section {
+    width: 200px;
+    float: left;
+    border: 10px solid #FF6600;
+    background: #000;
+    position: relative;
 }
-.section_content{
-display: block;
-padding: 25px;
-overflow: hidden;
+
+.section_content {
+    display: block;
+    padding: 25px;
+    overflow: hidden;
 }
-.corner{
-width: 15px;
-position: absolute;
-z-index: 9;
+
+.corner {
+    width: 15px;
+    position: absolute;
+    z-index: 9;
 }
-.tl{
-top: -10px;
-left: -10px;
+
+.tl {
+    top: -10px;
+    left: -10px;
 }
-.tr{
-top: -10px;
-right: -10px;
+
+.tr {
+    top: -10px;
+    right: -10px;
 }
-.bl{
-bottom: -10px;
-left: -10px;
+
+.bl {
+    bottom: -10px;
+    left: -10px;
 }
-.br{
-bottom: -10px;
-right: -10px;
+
+.br {
+    bottom: -10px;
+    right: -10px;
 }
-.corner .a{
-width: 5px;
-height: 10px;
-float: left;
-display: block;
-background: #000;
+
+.corner .a {
+    width: 5px;
+    height: 10px;
+    float: left;
+    display: block;
+    background: #000;
 }
-.corner .b{
-width: 5px;
-height: 5px;
-float: left;
-display: block;
-background: #000;
+
+.corner .b {
+    width: 5px;
+    height: 5px;
+    float: left;
+    display: block;
+    background: #000;
 }
-.corner .c{
-width: 10px;
-height: 10px;
-float: left;
-display: block;
-background: #FF6600;
+
+.corner .c {
+    width: 10px;
+    height: 10px;
+    float: left;
+    display: block;
+    background: #FF6600;
 }
-.tr .a, .tr .b,
-.tr .c, .br .a,
-.br .b, .br .c{
-float: right;
+
+.tr .a,
+.tr .b,
+.tr .c,
+.br .a,
+.br .b,
+.br .c {
+    float: right;
 }
+
 .bl .a,
-.br .a{
-border-top: 5px solid #FF6600;
+.br .a {
+    border-top: 5px solid #FF6600;
 }
