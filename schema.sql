@@ -41,6 +41,7 @@ create table challenge (
   PRIMARY KEY(domain, snapshot)
 );
 
+drop table if exists domain_snapshot;
 create table domain_snapshot (
   snapshot_id integer,
   domain_id integer,
@@ -49,11 +50,13 @@ create table domain_snapshot (
   PRIMARY KEY(domain_id, snapshot_id)
 );
 
+drop table if exists snapshot;
 create table snapshot (
   id integer primary key autoincrement,
   name text NOT NULL UNIQUE
 );
 
+drop table if exists domain;
 create table domain (
   id integer primary key autoincrement,
   name text NOT NULL UNIQUE
