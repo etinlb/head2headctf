@@ -97,7 +97,7 @@ def register():
         return "user by that name already exists!"
     else:
         register_user(g.db, request.form["username"])
-        return redirect(url_for('scoreboard', _external=True, _scheme='https'))
+        return redirect(url_for('scoreboard', _external=True))
 
 
 @app.route("/submitflag", methods=['GET', 'POST'])
