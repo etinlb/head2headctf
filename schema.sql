@@ -46,7 +46,7 @@ create table domain_snapshot (
   domain_id integer,
   FOREIGN KEY(snapshot_id) REFERENCES snapshot,
   FOREIGN KEY(domain_id) REFERENCES domain,
-  PRIMARY KEY(domain__id, snapshot_id)
+  PRIMARY KEY(domain_id, snapshot_id)
 );
 
 create table snapshot (
