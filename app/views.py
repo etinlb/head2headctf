@@ -9,7 +9,7 @@ import ctf_db as hack
 import time
 
 
-TIMER_AMOUNT = 600
+TIMER_AMOUNT = 900 
 
 
 def kill_vms():
@@ -51,7 +51,7 @@ def scoreboard():
     else:
         match_data = None
 
-    if match_data["timeleft"] < 0:
+    if match_data is not None and match_data["timeleft"] < 0:
         match_data = None
 
     pprint(match_data)
@@ -81,6 +81,11 @@ def post():
     t.start() # after 30 seconds, "hello, world" will be printed
 
     return "Started"
+
+@app.route('/stopvm', methods = ['POST'])
+def stopvm():
+    kill_vms()
+    return "Killed."
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -119,7 +124,13 @@ def viewdomains_database(error=None):
 
 
 def render_submission_form(error=None):
-    users = get_all_users(g.db)
+    #users = get_all_users(g.db)
+    users = []
+    active_match = get_active_match(g.db)
+    if active_match is not None:
+        users.append(active_match["username1"])
+        users.append(active_match["username2"])
+    print(users)
     return render_template('submit_flag.html', users=users, error=error)
 
 
@@ -132,7 +143,8 @@ def process_flag_submission(username, flag):
         return jsonify(**ret_dict)
 
     current_flag = user["current_flag"]
-    pprint(current_flag)
+    pprint("User Flag|" + flag.lower() + "|")
+    pprint("Current Flag|" + current_flag.lower() + "|")
     pprint(current_flag.lower() == flag.lower())
 
     if (current_flag.lower() == flag.lower()):

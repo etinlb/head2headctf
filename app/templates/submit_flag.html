@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Score{% endblock %}
+{% block title %}Submit the flag!{% endblock %}
 {% block head %}
     {{ super() }}
     <script src="{{ url_for('static', filename='js/submit_flag.js') }}" type="text/javascript"></script>
 
 {% endblock %}
 {% block content %}
+{% if users|length > 0 %}
 <h2>Capture flag!</h2>
 {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
 
@@ -15,8 +16,8 @@
         <label class="col-md-2 col-form-label" for=username>Alias:</label>
         <div class="col-md-4">
             <select id="username" name="username" class="eightbit-font eightbit-input form-control">
-            {% for user in users|sort(attribute='username') %}
-              <option value="{{user['username']}}">{{user['username']}}</option>
+            {% for user in users|sort %}
+              <option value="{{user}}">{{user}}</option>
             {% endfor %}
             </select>
         </div>
@@ -35,4 +36,7 @@
         </div>
     </div>
 </form>
+{% else %}
+	<p class=error><strong>Error: No active match in session</strong>
+{% endif %}
 {% endblock %}
