@@ -236,14 +236,14 @@ keyframes :
 /* ANIMATE UNIQUE SCANLINE */
 @-webkit-keyframes scanline {
   0% {
-    -webkit-transform: translate3d(0, 200000%, 0);
-            transform: translate3d(0, 200000%, 0);
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
   }
 }
 @keyframes scanline {
   0% {
-    -webkit-transform: translate3d(0, 200000%, 0);
-            transform: translate3d(0, 200000%, 0);
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
   }
 }
 @-webkit-keyframes scanlines {
