@@ -34,12 +34,20 @@ html {
 }
 
 .eightbit-btn:hover, .eightbit-btn:focus, .eightbit-btn:active, .eightbit-btn.active, .open>.dropdown-toggle.eightbit-btn {
-    color: #fff;
-    background-color: rgb(80, 244, 66);
-    border-color: rgb(80, 244, 66);
+  color: #fff;
+  background-color: rgb(80, 244, 66);
+  border-color: rgb(80, 244, 66);
 }
 
+.emoji {
+  color: rgb(255, 0, 0);
+  font-size: 200px;
+  animation: blinker 1s linear infinite;
+}
 
+@keyframes blinker {  
+  50% { opacity: 0; }
+}
 
 body {
   font-family: "eightbit", helvetica, arial, sans-serif;
