@@ -26,11 +26,12 @@ drop table if exists avatars;
 CREATE TABLE avatars (
   id integer primary key autoincrement,
   name text,
-  sprite_sheet_name text
+  sprite_sheet_name text,
+  hero_image text
 );
 
-INSERT INTO avatars (name, sprite_sheet_name)
-VALUES ("RYU", "ryu.gif");
+INSERT INTO avatars (name, sprite_sheet_name, hero_image)
+VALUES ("RYU", "ryu.gif", "ryu_hero.png");
 
 
 drop table if exists challenge_catogory;
