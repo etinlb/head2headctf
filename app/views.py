@@ -9,7 +9,7 @@ import ctf_db as hack
 import time
 
 
-TIMER_AMOUNT = 900 
+TIMER_AMOUNT = 900
 
 
 def kill_vms():
@@ -47,7 +47,8 @@ def scoreboard():
     if active_match is not None:
         match_data["player_1"] = active_match["username1"]
         match_data["player_2"] = active_match["username2"]
-        match_data["timeleft"] = TIMER_AMOUNT - (int(time.time()) - active_match["timestarted"])
+        match_data["timeleft"] = TIMER_AMOUNT - \
+            (int(time.time()) - active_match["timestarted"])
     else:
         match_data = None
 
@@ -55,10 +56,11 @@ def scoreboard():
         match_data = None
 
     pprint(match_data)
-    return render_template('scoreboard.html', users=users, active_match=match_data)
+    return render_template('scoreboard.html', users=users,
+                           active_match=match_data)
 
 
-@app.route('/startvm', methods = ['POST'])
+@app.route('/startvm', methods=['POST'])
 def post():
     # Get the parsed contents of the form data
     json = request.json
@@ -69,23 +71,27 @@ def post():
     for entry in json:
         try:
             if (entry["username"] != "maint"):
-                users.append((entry["username"], entry["domain_name"], entry["snapshot_name"]))
-            vm.start_domain("qemu+ssh://root@192.168.200.1/system", entry["domain_name"], entry["snapshot_name"])
+                users.append(
+                    (entry["username"], entry["domain_name"], entry["snapshot_name"]))
+            vm.start_domain("qemu+ssh://root@192.168.200.1/system",
+                            entry["domain_name"], entry["snapshot_name"])
         except Exception as e:
             pass
 
     hack.start_contest_by_snapshot(g.db, users[0][0], users[1][0],
-                                         users[0][1], users[1][1],
-                                         users[0][2], users[1][2])
+                                   users[0][1], users[1][1],
+                                   users[0][2], users[1][2])
     t = Timer(TIMER_AMOUNT, kill_vms)
-    t.start() # after 30 seconds, "hello, world" will be printed
+    t.start()  # after 30 seconds, "hello, world" will be printed
 
     return "Started"
 
-@app.route('/stopvm', methods = ['POST'])
+
+@app.route('/stopvm', methods=['POST'])
 def stopvm():
     kill_vms()
     return "Killed."
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -112,8 +118,9 @@ def submitflag(error=None):
 
 @app.route("/viewdomains", methods=['GET'])
 def viewdomains(error=None):
-    connection_str = "qemu+ssh://root@192.168.200.1/system"
-    domains = vm.get_domains_and_snapshots("qemu+ssh://root@192.168.200.1/system")
+    connection_str = "qemu+ssh://root@192.168.1.105/system"
+    domains = vm.get_domains_and_snapshots(
+        "qemu+ssh://root@192.168.1.105/system")
     users = get_all_users(g.db)
     return render_template("domains.html", domains=domains, users=users)
 
@@ -126,7 +133,6 @@ def viewdomains_database(error=None):
 
 
 def render_submission_form(error=None):
-    #users = get_all_users(g.db)
     users = []
     active_match = get_active_match(g.db)
     if active_match is not None:
