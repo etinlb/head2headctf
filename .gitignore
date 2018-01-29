@@ -12,3 +12,4 @@ server.crt
 
 setup_challenges.sh
 pyenv/
+nginx.default.bak
