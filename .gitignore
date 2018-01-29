@@ -11,3 +11,5 @@ server.crt
 *.db
 
 setup_challenges.sh
+pyenv/
+nginx.default.bak

@@ -1,0 +1,5 @@
+            <select id="username" name="username" class="eightbit-font eightbit-input form-control">
+            {% for user in users|sort(attribute='username') %}
+              <option value="{{user['username']}}">{{user['username']}}</option>
+            {% endfor %}
+            </select>

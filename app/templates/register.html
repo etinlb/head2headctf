@@ -10,12 +10,20 @@
     <form class="form-horizontal" method="post">
         <fieldset>
             <!-- Form Name -->
-            <legend>Register Users</legend>
+            <legend>Form Name</legend>
             <!-- Text input-->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="username">Username</label>
                 <div class="col-md-4">
                     <input id="username" name="username" type="text" placeholder="probablysomethingoffensive" class="form-control eightbit-font eightbit-input input-md" required="">
+                </div>
+                <label class="col-md-4 control-label" for="avatar">Avatar</label>
+                <div class="col-md-4">
+                    <select id="avatar_id" name="avatar" class="eightbit-font eightbit-input form-control">
+                    {% for item in avatars %}
+                        <option  value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
                 </div>
             </div>
             <div class="form-group">

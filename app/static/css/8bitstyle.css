@@ -20,25 +20,33 @@ html {
   border-color: rgb(80, 244, 66);
 }
 
-.eightbit-input:hover, .eightbit-input:focus, .eightbit-input:active, .eightbit-input.active {
+.eightbit-input:hover, .eightbit-input:focus, .eightbit-input:active, .eightbit-input.active, .open>.dropdown-toggle.eightbit-input {
   background: 0;
   border-color: rgb(80, 244, 66);
   color :rgb(80, 244, 66);
-  outline: 0;
 }
+
 
 .eightbit-btn {
   color: rgb(80, 244, 66);
   background-color: Transparent;
   border-color: rgb(80, 244, 66);
-  outline:none !important;
 }
 
 .eightbit-btn:hover, .eightbit-btn:focus, .eightbit-btn:active, .eightbit-btn.active, .open>.dropdown-toggle.eightbit-btn {
-    color: #000;
-    background-color: rgb(80, 244, 66);
-    border-color: rgb(80, 244, 66);
-    outline:none !important;
+  color: #fff;
+  background-color: rgb(80, 244, 66);
+  border-color: rgb(80, 244, 66);
+}
+
+.emoji {
+  color: rgb(255, 0, 0);
+  font-size: 200px;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0; }
 }
 
 body {
@@ -52,14 +60,13 @@ body {
 }
 
 div.table-title {
-  display: block;
+   display: block;
   margin: auto;
   max-width: 600px;
   padding:5px;
   width: 100%;
 }
-
-/* Override bootstrap tables */
+/* Override bootstap tables */
 .table td, .table th {
   border-top: 0px;
 }
@@ -101,6 +108,12 @@ th {
   vertical-align:middle;
 }
 
+th:first-child {
+}
+
+th:last-child {
+}
+
 tr {
   font-size:16px;
   font-weight:normal;
@@ -108,9 +121,7 @@ tr {
 }
 
 tr:hover td {
-  /*background: #4E5066;*/
-  background: rgb(80, 244, 66);
-  color: #000;
+  background:#4E5066;
 }
 
 tr:first-child {
@@ -121,13 +132,32 @@ tr:last-child {
   border-bottom:none;
 }
 
+/*tr:nth-child(odd) td {
+  background:#EBEBEB;
+}
+*/
+
+/*tr:nth-child(odd):hover td {
+  background:#ffffff;
+}
+*/
+tr:last-child td:first-child {
+}
+
+tr:last-child td:last-child {
+}
+
 td {
+  /*background:#FFFFFF;*/
   padding:20px;
   text-align:left;
   vertical-align:middle;
   font-weight:300;
   font-size:18px;
   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+}
+
+td:last-child {
 }
 
 th.text-left {
@@ -214,14 +244,14 @@ keyframes :
 /* ANIMATE UNIQUE SCANLINE */
 @-webkit-keyframes scanline {
   0% {
-    -webkit-transform: translate3d(0, 200000%, 0);
-            transform: translate3d(0, 200000%, 0);
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
   }
 }
 @keyframes scanline {
   0% {
-    -webkit-transform: translate3d(0, 200000%, 0);
-            transform: translate3d(0, 200000%, 0);
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
   }
 }
 @-webkit-keyframes scanlines {
