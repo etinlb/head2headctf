@@ -140,7 +140,7 @@ def process_flag_submission(username, flag):
     ret_dict = {"success": False}
     if user is None:
         ret_dict["error_msg"] = "NO USER BY THAT NAME"
-        return jsonify(**ret_dict)
+        return render_template("submit_error.html", error=ret_dict["error_msg"])
 
     current_flag = user["current_flag"]
     pprint("User Flag|" + flag.lower() + "|")
@@ -154,5 +154,8 @@ def process_flag_submission(username, flag):
         stop_running_matches(g.db)
         vm.kill_vms()
         ret_dict["success"] = True
+    else:
+        error="Incorrect submission!"
+        return render_template("submit_error.html", error=error)
 
     return jsonify(**ret_dict)
