@@ -2,6 +2,7 @@
 {% block title %}Register{% endblock %}
 {% block head %}
     {{ super() }}
+	<script src="{{ url_for('static', filename='js/avatars.js') }}" type="text/javascript"></script>
     <style type="text/css">
     .important { color: #336699; }
     </style>
@@ -17,11 +18,18 @@
                 <div class="col-md-4">
                     <input id="username" name="username" type="text" placeholder="probablysomethingoffensive" class="form-control eightbit-font eightbit-input input-md" required="">
                 </div>
-                <label class="col-md-4 control-label" for="avatar">Avatar</label>
-                <div class="col-md-4">
+                
+				<label class="col-md-4 control-label" for="avatar">Avatar</label>
+				
+				<p>
+				  {% for item in avatars %}
+				    <img id="{{ item.name }}_hero" src="static/images/{{ item.hero_image }}" />
+				  {% endfor %}
+				</p>
+				<div class="col-md-4">
                     <select id="avatar_id" name="avatar" class="eightbit-font eightbit-input form-control">
                     {% for item in avatars %}
-                        <option  value="{{ item.id }}">{{ item.name }}</option>
+                        <option value="{{ item.id }}">{{ item.name }}</option>
                     {% endfor %}
                 </select>
                 </div>
