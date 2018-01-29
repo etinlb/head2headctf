@@ -20,10 +20,9 @@
                 </div>
                 
 				<label class="col-md-4 control-label" for="avatar">Avatar</label>
-				
 				<p>
 				  {% for item in avatars %}
-				    <img id="{{ item.name }}_hero" src="static/images/{{ item.hero_image }}" />
+				    <img id="{{ item.name }}_hero" src="static/images/{{ item.hero_image }}" style="display:none"/>
 				  {% endfor %}
 				</p>
 				<div class="col-md-4">
