@@ -91,12 +91,14 @@ def stopvm():
 def register():
     # redirect to register if already registered
     if request.method == 'GET':
-        return render_template('register.html')
+        avatars = get_avatars(g.db)
+        return render_template('register.html', avatars=avatars)
 
     if find_user(g.db, request.form["username"]):
         return "user by that name already exists!"
     else:
-        register_user(g.db, request.form["username"])
+        register_user(g.db, request.form["username"],
+                      request.form["avatar"])
         return redirect(url_for('scoreboard', _external=True))
 
 

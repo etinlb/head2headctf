@@ -4,12 +4,19 @@ from pprint import pprint
 Container for functions that do database things
 """
 
-ACTIVE_MATCH_QUERY = "SELECT * FROM match_data WHERE active = 1";
+ACTIVE_MATCH_QUERY = "SELECT * FROM match_data WHERE active = 1"
+
 
 def connect_db(db_file, row_factory=sqlite3.Row):
     conn = sqlite3.connect(db_file)
     conn.row_factory = row_factory
     return conn
+
+
+def get_avatars(conn):
+    avatars_query = "SELECT * FROM avatars"
+    return query_db(conn, avatars_query)
+
 
 def declare_winner(conn, username):
     match_query = "SELECT * FROM match_data WHERE username1 = (?) or username2 = (?) and active = 1"
@@ -69,7 +76,7 @@ def get_all_domain_data(conn):
 
 
 def get_challenge(conn, domain, snapshot):
-    return query_db(conn, "SELECT * FROM challenge WHERE domain = (?) and snapshot = (?)", (domain,snapshot), True)
+    return query_db(conn, "SELECT * FROM challenge WHERE domain = (?) and snapshot = (?)", (domain, snapshot), True)
 
 
 def stop_challenge(conn, user_id):
@@ -107,10 +114,10 @@ def execute_trans(conn, statement, args_tup):
     return False
 
 
-
-
-def register_user(conn, username):
-    return execute_trans(conn, "INSERT INTO users (username) VALUES (?)", (username,))
+def register_user(conn, username, avatar_id):
+    return execute_trans(conn,
+                         "INSERT INTO users (username, avatar_id) VALUES ((?),(?))",
+                         (username, avatar_id))
 
 
 def get_current_flag(conn, user_id, challenge_id):
@@ -120,6 +127,7 @@ def get_current_flag(conn, user_id, challenge_id):
         return None
 
     return flag["flag"]
+
 
 def stop_match(conn, match_id, winner=None, score=0):
     stop_query = ""

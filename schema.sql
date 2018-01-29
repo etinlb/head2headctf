@@ -17,8 +17,21 @@ CREATE TABLE users(
   username text NOT NULL UNIQUE,
   score integer DEFAULT 0,
   current_flag text,
-  next_score integer DEFAULT 50
+  next_score integer DEFAULT 50,
+  avatar_id integer,
+  FOREIGN KEY(avatar_id) REFERENCES AVATAR
 );
+
+drop table if exists avatars;
+CREATE TABLE avatars (
+  id integer primary key autoincrement,
+  name text,
+  sprite_sheet_name text
+);
+
+INSERT INTO avatars (name, sprite_sheet_name)
+VALUES ("RYU", "ryu.gif");
+
 
 drop table if exists challenge_catogory;
 create table challenge_catogory(
